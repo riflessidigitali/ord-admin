@@ -9,7 +9,7 @@ body:
     id: description
     attributes:
       label: Description
-      description: Write a short description of the bug or issue
+      description: A short description of the bug or issue
     validations:
       requrired: true
 
@@ -18,6 +18,10 @@ body:
     attributes:
       label: Reproduction Steps
       description: Outline the steps someone can follow in order to reproduce the issue or bug
+      value: |
+        1. Go to...
+        2. Click on...
+        3. Wait for...        
     validations:
       requrired: true
 
@@ -26,6 +30,8 @@ body:
     attributes:
       label: Expercted Outcome
       description: Describe what happened after performing the steps listed in the *Reproduction Steps*
+      value: |
+        I'd expect the page to reload without any error messages being displayed.
     validations:
       requrired: true
 
@@ -34,6 +40,8 @@ body:
     attributes:
       label: Actual Outcome
       description: Describe what actually happened after performing the steps listed in the *Reproduction Steps*
+      value: |
+        An error message is displayed on screen: `[22-Jan-2024 01:02:03 UTC] PHP Notice:  Only variables should be passed by reference in /srv/public/html/index.php on line 456`
     validations:
       requrired: true
       
@@ -52,7 +60,7 @@ body:
     id: additional-information
     attributes:
       label: Additional Information
-      description: Provide any additional information such as screenshots, screen recordings, or other details relevant to the issue
+      description: Provide any additional information such as error logs, screenshots, screen recordinngs, or any other details relevant to the issue
 
   - type: input
     id: helpscout-link
