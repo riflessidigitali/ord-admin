@@ -35165,7 +35165,7 @@ const copyWorkflow = async () => {
         if (projects.length > 0) {
             repoWorkflow = workflow.replace(/{{{PROJECT_IDS}}}/g, projects.toString().replace(/, *$/, ''));
             if (owners.length > 0) {
-                repoWorkflow = repoWorkflow.replace(/{{{PRIMARY_CODEOWNER}}}/g, `"{owners[0].toString()}"`);
+                repoWorkflow = repoWorkflow.replace(/{{{PRIMARY_CODEOWNER}}}/g, `"${owners[0].toString()}"`);
             }
         }
         try {
