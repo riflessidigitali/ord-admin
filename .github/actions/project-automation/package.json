@@ -1,0 +1,20 @@
+{
+    "name": "project-automation",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/index.js",
+    "author": "Team Caseproof <team@caseproof.com>",
+    "license": "MIT",
+    "dependencies": {
+      "@actions/core": "^1.10.1",      
+      "@actions/github": "^6.0.0",
+      "@octokit/plugin-create-or-update-text-file": "^4.0.1",
+      "js-yaml": "^4.1.0"
+    },
+    "devDependencies": {
+      "@vercel/ncc": "^0.38.1"
+    },
+    "scripts": {
+      "build": "ncc build src/index.js --license licenses.txt"
+    }
+  }

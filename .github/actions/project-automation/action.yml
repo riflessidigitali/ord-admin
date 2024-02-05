@@ -1,0 +1,7 @@
+name: 'Organization Repository to Project'
+description: 'Action to copy project automation workflow'
+inputs:
+  repo-token:
+    description: 'A GitHub access token secret - must have the admin:org scope'
+runs:
+  main: 'dist/index.js'

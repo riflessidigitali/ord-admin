@@ -1,0 +1,31 @@
+name: Sync Organization Files
+
+on:
+  push:
+    paths:
+      # Utils.
+      - .github/workflows-templates/project-automation.yml
+
+      # Defs.
+      - projects.yml
+
+      # When this file is edited.
+      - .github/workflows/workflow-sync.yml
+    branches:
+      - trunk
+  workflow_dispatch:
+
+env:
+  DRY_RUN: false
+
+jobs:
+  projects:
+    name: Utility Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Sync project-automation
+        uses: ./.github/actions/project-automation
+        with:
+          repo-token: ${{ secrets.CSPF_PKGS_WORKFLOW_DISPATCH_PAT }}

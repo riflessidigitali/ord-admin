@@ -1,0 +1,10 @@
+- project: 1
+  owner: "@eri-trabiccolo"
+  repositories:
+    - rd-eventi
+    - childify-me
+
+- project: 2
+  repositories:
+    - dotfiles
+    - childify-me
