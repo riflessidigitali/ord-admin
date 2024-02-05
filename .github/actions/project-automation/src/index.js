@@ -16,7 +16,7 @@ let repos = [],
 const
 	token   = core.getInput( 'repo-token' ),
 	_Octokit = Octokit.plugin(createOrUpdateTextFile),
-    octokit  = _Octokit( token ),
+    octokit  = new _Octokit( token ),
 	org      = 'riflessidigitali';
 
 /**
