@@ -18,7 +18,7 @@ const
 	token          = core.getInput( 'repo-token' ),
     octokit        = github.getOctokit( token ),
 	_Octokit       = Octokit.plugin(createOrUpdateTextFile),
-    octokitCreate  = new _Octokit( token ),
+    octokitCreate  = new _Octokit({auth:token}),
 	org            = 'riflessidigitali';
 
 /**
