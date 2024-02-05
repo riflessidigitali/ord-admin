@@ -35169,10 +35169,7 @@ const copyWorkflow = async () => {
             }
         }
         try {
-            const {
-                updated,
-                data: { commit },
-            } = await octokitCreate.createOrUpdateTextFile({
+            await octokitCreate.createOrUpdateTextFile({
                 owner: org,
                 repo: repo,
                 path: ".github/workflows/project-automation.yml",
@@ -35182,8 +35179,7 @@ const copyWorkflow = async () => {
         } catch (error) {
             console.error(error);
         }
-        // Maybe log something.
-        console.log(updated);
+
     }
     console.log('===Project and Owners===');
     console.log(repoProjectsOwners);
