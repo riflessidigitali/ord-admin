@@ -6,5 +6,4 @@
 - project: 2
   repositories:
     - dotfiles
-    - whatever
 
