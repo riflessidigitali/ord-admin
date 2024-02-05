@@ -36,6 +36,9 @@ const pluck = (arr, key) => arr.map(i => i[key]);
 const buildRepoProjectsOwners = async () => {
 
     const projectConfigs = yaml.load(readFileSync(`${ process.env.GITHUB_WORKSPACE }/defs/projects.yml`, 'utf8'));
+    console.log('===Project Configs===');
+    console.log(projectConfigs);
+    console.log('===Project Configs END===');
     repos.forEach((repo) => {
         repoProjectsOwners[repo] = repoProjectsOwners[repo] || [];
         projectConfigs.forEach((item) => {
@@ -78,9 +81,11 @@ const copyWorkflow = async () => {
         });
         // Maybe log something.
         console.log(updated);
-        console.log(data);
+        console.log(data.commit);
     }
+    console.log('===Project Owners===');
     console.log(repoProjectsOwners);
+    console.log('===Project Owners END===');
 }
 
 const main = async () => {
