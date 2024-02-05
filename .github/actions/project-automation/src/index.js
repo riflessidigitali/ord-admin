@@ -72,16 +72,21 @@ const copyWorkflow = async () => {
             }
         }
         console.log('createOrUpdate '+ repo);
-        const {
-            updated,
-            data: { commit },
-          } = await octokitCreate.createOrUpdateTextFile({
-            owner: org,
-            repo: repo,
-            path: ".github/workflows/project-automation.yml",
-            content: repoWorkflow, // When null the workflow file will be deleted.
-            message: "Project Automation Workflow File"
-        });
+        try {
+            const {
+                updated,
+                data: { commit },
+            } = await octokitCreate.createOrUpdateTextFile({
+                owner: org,
+                repo: repo,
+                path: ".github/workflows/project-automation.yml",
+                content: repoWorkflow, // When null the workflow file will be deleted.
+                message: "Project Automation Workflow File"
+            });
+        } catch (error) {
+            console.error(error);
+        }
+
         // Maybe log something.
         console.log(updated);
     }
