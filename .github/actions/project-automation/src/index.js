@@ -73,7 +73,7 @@ const copyWorkflow = async () => {
             owner: org,
             repo: repo,
             path: ".github/workflows/project-automation.yml",
-            content: repoWorflow, // When null the workflow file will be deleted.
+            content: repoWorkflow, // When null the workflow file will be deleted.
             message: "Project Automation Workflow File"
         });
         // Maybe log something.
