@@ -35161,8 +35161,8 @@ const copyWorkflow = async () => {
     const workflow = readFileSync(`${ process.env.GITHUB_WORKSPACE }/.github/workflow-templates/project-automation.yml`, 'utf8');
     for ( repo in repoProjectsOwners ) {
         const
-            projects = pluck(repoProjectsOwners[repo], 'project'),
-            owners   = pluck(repoProjectsOwners[repo], 'owner');
+            projects = pluck(repoProjectsOwners[repo], 'project').filter(() => true),
+            owners   = pluck(repoProjectsOwners[repo], 'owner').filter(() => true);
 
         let repoWorkflow = null;
         if (projects.length > 0) {
@@ -35171,7 +35171,7 @@ const copyWorkflow = async () => {
                 repoWorkflow = repoWorkflow.replace(/{{{PRIMARY_CODEOWNER}}}/g, owners[0].toString());
             }
         }
-
+        console.log('createOrUpdate '+ repo);
         const {
             updated,
             data: { commit },
