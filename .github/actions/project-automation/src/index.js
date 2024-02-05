@@ -90,7 +90,6 @@ const main = async () => {
 
     repos = repos
         .filter( ( { archived, disabled, fork } ) => false === archived && false === disabled /*&& false === fork*/ );
-    console.log(repos);
     await updateRepos();
 
 }
