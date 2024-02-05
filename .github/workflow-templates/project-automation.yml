@@ -18,21 +18,11 @@ on:
       - reopened
 
 env:
-  PROJECT_ORG: riflessidigitali
+  PROJECT_ORG: {{{PROJECT_ORG}}}
   PRIMARY_CODEOWNER: {{{PRIMARY_CODEOWNER}}}
-  PROJECT_IDS: {{{PROJECT_IDS}}}
+  PROJECT_ID: {{{PROJECT_ID}}}
 
 jobs:
-  #######################################
-  # Compute.
-  #######################################
-  compute:
-    runs-on: ubuntu-latest
-    outputs:
-      PROJECT_IDS: ${{ env.PROJECT_IDS }}
-    steps:
-      - name: Compute outputs
-        run: echo "PROJECT_IDS=${{ env.PROJECT_IDS }}" >> $GITHUB_OUTPUT
 
   #######################################
   # Add issue to the Development project.
@@ -42,16 +32,13 @@ jobs:
     needs: compute
     runs-on: ubuntu-latest
     if: ( 'issues' == github.event_name && ( 'opened' == github.event.action || 'reopened' == github.event.action ) )
-    strategy:
-      matrix:
-        project_ids: ${{ needs.compute.outputs.PROJECT_IDS }}
     steps:
       - name: Add Issue to Project
         uses: leonsteinhaeuser/project-beta-automations@v2.2.1
         with:
           gh_token: ${{ secrets.CSPF_PKGS_WORKFLOW_DISPATCH_PAT }}
           organization: ${{ env.PROJECT_ORG }}
-          project_id: ${{ matrix.project_ids }}
+          project_id: ${{ env.PROJECT_ID }}
           resource_node_id: ${{ github.event.issue.node_id }}
           status_value: "Awaiting Triage"
 

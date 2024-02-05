@@ -16,7 +16,8 @@ on:
   workflow_dispatch:
 
 env:
-  DRY_RUN: false
+  ORGANIZATION: 'riflessidigitali'
+
 
 jobs:
   projects:
@@ -29,3 +30,4 @@ jobs:
         uses: ./.github/actions/project-automation
         with:
           repo-token: ${{ secrets.CSPF_PKGS_WORKFLOW_DISPATCH_PAT }}
+          org: ${{ env.ORGANIZATION }}

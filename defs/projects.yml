@@ -6,4 +6,5 @@
 - project: 2
   repositories:
     - dotfiles
-    - childify-me
+    - whatever
+
