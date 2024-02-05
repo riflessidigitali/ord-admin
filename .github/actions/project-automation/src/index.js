@@ -1,6 +1,7 @@
 // Require modules.
 const
 	core = require( '@actions/core' ),
+    github = require( '@actions/github' ),
 	{ readFileSync } = require( 'fs' ),
 	yaml = require( 'js-yaml' ),
     { Octokit } = require("@octokit/core"),
@@ -14,10 +15,11 @@ let repos = [],
     repoProjectsOwners = {};
 
 const
-	token   = core.getInput( 'repo-token' ),
-	_Octokit = Octokit.plugin(createOrUpdateTextFile),
-    octokit  = new _Octokit( token ),
-	org      = 'riflessidigitali';
+	token          = core.getInput( 'repo-token' ),
+    octokit        = github.getOctokit( token ),
+	_Octokit       = Octokit.plugin(createOrUpdateTextFile),
+    octokitCreate  = new _Octokit( token ),
+	org            = 'riflessidigitali';
 
 /**
  * Updates repos.
@@ -67,7 +69,7 @@ const copyWorkflow = async () => {
         const {
             updated,
             data: { commit },
-          } = await octokit.createOrUpdateTextFile({
+          } = await octokitCreate.createOrUpdateTextFile({
             owner: org,
             repo: $repo,
             path: ".github/workflows/project-automation.yml",
