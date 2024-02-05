@@ -35140,10 +35140,10 @@ const buildRepoProjectsOwners = async () => {
     console.log(projectConfigs);
     console.log('===Project Configs END===');
     repos.forEach((repo) => {
-        repoProjectsOwners[repo] = repoProjectsOwners[repo] || [];
+        repoProjectsOwners[repo.name] = repoProjectsOwners[repo.name] || [];
         projectConfigs.forEach((item) => {
-            if (item.repositories.includes(repo)) {
-                repoProjectsOwners[repo].push(
+            if (item.repositories.includes(repo.name)) {
+                repoProjectsOwners[repo.name].push(
                     {
                         project: item.project,
                         owner: item.owner ?? ''
