@@ -35152,6 +35152,9 @@ const buildRepoProjectsOwners = async () => {
             }
         });
     });
+    console.log('===Repo Project Owners===');
+    console.log(repoProjectsOwners);
+    console.log('===Repo Project Owners END===');
 }
 
 const copyWorkflow = async () => {
