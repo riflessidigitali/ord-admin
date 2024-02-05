@@ -52,9 +52,6 @@ const buildRepoProjectsOwners = async () => {
             }
         });
     });
-    console.log('===Repo Project Owners===');
-    console.log(repoProjectsOwners);
-    console.log('===Repo Project Owners END===');
 }
 
 const copyWorkflow = async () => {
@@ -68,10 +65,9 @@ const copyWorkflow = async () => {
         if (projects.length > 0) {
             repoWorkflow = workflow.replace(/{{{PROJECT_IDS}}}/g, projects.toString().replace(/, *$/, ''));
             if (owners.length > 0) {
-                repoWorkflow = repoWorkflow.replace(/{{{PRIMARY_CODEOWNER}}}/g, owners[0].toString());
+                repoWorkflow = repoWorkflow.replace(/{{{PRIMARY_CODEOWNER}}}/g, `"{owners[0].toString()}"`);
             }
         }
-        console.log('createOrUpdate '+ repo);
         try {
             const {
                 updated,
@@ -86,7 +82,6 @@ const copyWorkflow = async () => {
         } catch (error) {
             console.error(error);
         }
-
         // Maybe log something.
         console.log(updated);
     }
