@@ -4,4 +4,5 @@ inputs:
   repo-token:
     description: 'A GitHub access token secret - must have the admin:org scope'
 runs:
+  using: 'node20'
   main: 'dist/index.js'
