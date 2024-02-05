@@ -35171,7 +35171,7 @@ const copyWorkflow = async () => {
             data: { commit },
           } = await octokitCreate.createOrUpdateTextFile({
             owner: org,
-            repo: $repo,
+            repo: repo,
             path: ".github/workflows/project-automation.yml",
             content: repoWorflow, // When null the workflow file will be deleted.
             message: "Project Automation Workflow File"
