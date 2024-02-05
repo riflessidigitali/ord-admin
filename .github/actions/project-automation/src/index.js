@@ -81,11 +81,10 @@ const copyWorkflow = async () => {
         });
         // Maybe log something.
         console.log(updated);
-        console.log(data.commit);
     }
-    console.log('===Project Owners===');
+    console.log('===Project and Owners===');
     console.log(repoProjectsOwners);
-    console.log('===Project Owners END===');
+    console.log('===Project and Owners END===');
 }
 
 const main = async () => {

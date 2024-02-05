@@ -20,7 +20,7 @@ env:
 
 jobs:
   projects:
-    name: Utility Files
+    name: Project Automation Workflow Sync
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
