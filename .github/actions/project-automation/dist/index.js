@@ -35175,7 +35175,7 @@ const crudWorkflow = async () => {
         let repoWorkflow = null;
         if (projects.length > 0) {
             repoWorkflow = workflow.replace(/{{{PROJECT_ORG}}}/g, org);
-            repoWorkflow = repoWorkflow.replace(/{{{PROJECT_ID}}}/g, `"${projects[0].toString()}"`);
+            repoWorkflow = repoWorkflow.replace(/{{{PROJECT_ID}}}/g, `${projects[0].toString()}`);
             if (owners.length > 0) {
                 repoWorkflow = repoWorkflow.replace(/{{{PRIMARY_CODEOWNER}}}/g, `"${owners[0].toString()}"`);
             }

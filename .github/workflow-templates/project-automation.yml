@@ -29,7 +29,6 @@ jobs:
   #######################################
   issue-to-project:
     name: Move Issue to Project Board
-    needs: compute
     runs-on: ubuntu-latest
     if: ( 'issues' == github.event_name && ( 'opened' == github.event.action || 'reopened' == github.event.action ) )
     steps:
