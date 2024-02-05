@@ -77,6 +77,8 @@ const copyWorkflow = async () => {
             message: "Project Automation Workflow File"
         });
         // Maybe log something.
+        console.log(updated);
+        console.log(data);
     }
     console.log(repoProjectsOwners);
 }
@@ -88,6 +90,7 @@ const main = async () => {
 
     repos = repos
         .filter( ( { archived, disabled, fork } ) => false === archived && false === disabled /*&& false === fork*/ );
+    console.log(repos);
     await updateRepos();
 
 }
