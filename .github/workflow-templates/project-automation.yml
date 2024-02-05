@@ -24,15 +24,27 @@ env:
 
 jobs:
   #######################################
+  # Compute.
+  #######################################
+  compute:
+    runs-on: ubuntu-latest
+    outputs:
+      PROJECT_IDS: ${{ env.PROJECT_IDS }}
+    steps:
+      - name: Compute outputs
+        run: echo "PROJECT_IDS=${{ env.PROJECT_IDS }}" >> $GITHUB_OUTPUT
+
+  #######################################
   # Add issue to the Development project.
   #######################################
   issue-to-project:
     name: Move Issue to Project Board
+    needs: compute
     runs-on: ubuntu-latest
     if: ( 'issues' == github.event_name && ( 'opened' == github.event.action || 'reopened' == github.event.action ) )
     strategy:
       matrix:
-        project_ids: ${{ env.PROJECT_IDS }}
+        project_ids: ${{ needs.compute.outputs.PROJECT_IDS }}
     steps:
       - name: Add Issue to Project
         uses: leonsteinhaeuser/project-beta-automations@v2.2.1

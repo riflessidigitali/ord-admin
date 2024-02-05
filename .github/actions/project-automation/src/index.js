@@ -2,13 +2,10 @@
 const
 	core = require( '@actions/core' ),
     github = require( '@actions/github' ),
-	{ readFileSync } = require( 'fs' ),
+	{readFileSync} = require( 'fs' ),
 	yaml = require( 'js-yaml' ),
-    { Octokit } = require("@octokit/core"),
-    {
-        createOrUpdateTextFile,
-        composeCreateOrUpdateTextFile,
-    } = require("@octokit/plugin-create-or-update-text-file");
+    {Octokit} = require("@octokit/core"),
+    {createOrUpdateTextFile} = require("@octokit/plugin-create-or-update-text-file");
 
 // Setup global vars.
 let repos = [],
@@ -24,21 +21,30 @@ const
 /**
  * Updates repos.
  *
- * @return {void}
+ * @return {Void}
  */
 const updateRepos = async () => {
     await buildRepoProjectsOwners();
-    await copyWorkflow();
+    await crudWorkflow();
 };
 
+/**
+ * Pluck.
+ *
+ * @param {Array} arr
+ * @param {String} key
+ * @return {Array}
+ */
 const pluck = (arr, key) => arr.map(i => i[key]);
 
+/**
+ * Create update or delete the project automation workflow on each repository.
+ *
+ * @return {void}
+ */
 const buildRepoProjectsOwners = async () => {
 
     const projectConfigs = yaml.load(readFileSync(`${ process.env.GITHUB_WORKSPACE }/defs/projects.yml`, 'utf8'));
-    console.log('===Project Configs===');
-    console.log(projectConfigs);
-    console.log('===Project Configs END===');
     repos.forEach((repo) => {
         repoProjectsOwners[repo.name] = repoProjectsOwners[repo.name] || [];
         projectConfigs.forEach((item) => {
@@ -54,7 +60,12 @@ const buildRepoProjectsOwners = async () => {
     });
 }
 
-const copyWorkflow = async () => {
+/**
+ * Create update or delete the project automation workflow on each repository.
+ *
+ * @return {void}
+ */
+const crudWorkflow = async () => {
     const workflow = readFileSync(`${ process.env.GITHUB_WORKSPACE }/.github/workflow-templates/project-automation.yml`, 'utf8');
     for ( repo in repoProjectsOwners ) {
         const
@@ -77,15 +88,17 @@ const copyWorkflow = async () => {
                 message: "Project Automation Workflow File"
             });
         } catch (error) {
-            console.error(error);
+            core.setFailed( error.message ) ;
         }
 
     }
-    console.log('===Project and Owners===');
-    console.log(repoProjectsOwners);
-    console.log('===Project and Owners END===');
 }
 
+/**
+ * Main.
+ *
+ * @return {void}
+ */
 const main = async () => {
     repos = await octokit.paginate('GET /orgs/{org}/repos', {
         org,
