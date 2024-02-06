@@ -2,7 +2,7 @@ name: 'Organization Project Automation Workflow'
 description: 'Action to copy project automation workflow'
 inputs:
   repo-token:
-    description: 'A GitHub access token secret - must have the workflows read/write permissios'
+    description: 'A GitHub access token secret - must have the workflows read/write permissions'
   org:
     description: 'The github organization slug'
 runs:
