@@ -35196,6 +35196,7 @@ const crudWorkflow = async () => {
                 message: "Project Automation Workflow File"
             });
         } catch (error) {
+            console.log(error);
             core.setFailed(error.messages) ;
         }
 
