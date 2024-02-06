@@ -73,7 +73,7 @@ const crudWorkflow = async () => {
             projects = pluck(repoProjectsOwners[repo], 'project').filter(() => true),
             owners   = pluck(repoProjectsOwners[repo], 'owner').filter(() => true);
 
-        let repoWorkflow = '';
+        let repoWorkflow = null;
         if (projects.length > 0) {
             repoWorkflow = workflow.replace(/{{{PROJECT_ORG}}}/g, org);
             repoWorkflow = repoWorkflow.replace(/{{{PROJECT_ID}}}/g, `${projects[0].toString()}`);
@@ -82,17 +82,17 @@ const crudWorkflow = async () => {
             }
         }
         try {
-            const action = repoWorkflow.length > 0 ? 'Creating/Updating' : 'Deleting';
+            const action = repoWorkflow ? 'Creating/Updating' : 'Deleting';
             console.log(
                 '%s the project-automation.yml workflow file on %s',
                 action,
                 repo
             );
-            await octokitCreate.createOrUpdateTextFile({
+            const { updated, deleted, data } = await octokitCreate.createOrUpdateTextFile({
                 owner: org,
                 repo: repo,
                 path: ".github/workflows/project-automation.yml",
-                content: repoWorkflow, // When equal to '' the workflow file will be deleted.
+                content: null, // When equals to null the workflow file will be deleted.
                 message: "Project Automation Workflow File"
             });
         } catch (error) {
