@@ -54,7 +54,7 @@ jobs:
 
       - name: Check CODEOWNERS file existence
         id: codeowners_file_exists
-        uses: andstor/file-existence-action@v2
+        uses: andstor/file-existence-action@v3
         with:
           files: .github/CODEOWNERS
 
