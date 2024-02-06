@@ -35188,7 +35188,7 @@ const crudWorkflow = async () => {
                 '%s the project-automation.yml workflow file on %s',
                 repoWorkflow ? 'Creating/Updating' : 'Deleting',
                 repo
-            );ì
+            );
             const { updated, deleted, data } = await octokitCreate.createOrUpdateTextFile({
                 owner: org,
                 repo: repo,
