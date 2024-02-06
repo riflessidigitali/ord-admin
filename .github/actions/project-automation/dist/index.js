@@ -30982,35 +30982,6 @@ module.exports = parseParams
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__nccwpck_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__nccwpck_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -31040,7 +31011,6 @@ var core = __nccwpck_require__(2186);
 var github = __nccwpck_require__(5438);
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(7147);
-var external_fs_default = /*#__PURE__*/__nccwpck_require__.n(external_fs_);
 ;// CONCATENATED MODULE: ./node_modules/js-yaml/dist/js-yaml.mjs
 
 /*! js-yaml 4.1.0 https://github.com/nodeca/js-yaml @license MIT */
@@ -34891,15 +34861,13 @@ var jsYaml = {
 	safeDump: safeDump
 };
 
-/* harmony default export */ const js_yaml = (jsYaml);
+/* harmony default export */ const js_yaml = ((/* unused pure expression or super */ null && (jsYaml)));
 
 
 // EXTERNAL MODULE: ./node_modules/@octokit/core/dist-node/index.js
 var dist_node = __nccwpck_require__(6762);
-var dist_node_default = /*#__PURE__*/__nccwpck_require__.n(dist_node);
 // EXTERNAL MODULE: ./node_modules/@octokit/plugin-create-or-update-text-file/dist-node/index.js
 var plugin_create_or_update_text_file_dist_node = __nccwpck_require__(8898);
-var plugin_create_or_update_text_file_dist_node_default = /*#__PURE__*/__nccwpck_require__.n(plugin_create_or_update_text_file_dist_node);
 ;// CONCATENATED MODULE: ./src/index.js
 // Require modules.
 
@@ -34916,7 +34884,7 @@ let repos = [],
 const
     token          = core.getInput( 'repo-token' ),
     octokit        = github.getOctokit( token ),
-    _Octokit       = dist_node_default().plugin((plugin_create_or_update_text_file_dist_node_default())),
+    _Octokit       = dist_node.Octokit.plugin(plugin_create_or_update_text_file_dist_node.createOrUpdateTextFile),
     octokitCreate  = new _Octokit({auth:token}),
     org            = core.getInput( 'org' );
 
@@ -34941,7 +34909,7 @@ const updateRepos = async () => {
  * Create an array of repo => [{ project, owner }].
  */
 const buildRepoProjectsOwners = async () => {
-    const projectConfigs = js_yaml.load(external_fs_default()(`${ process.env.GITHUB_WORKSPACE }/defs/projects.yml`, 'utf8'));
+    const projectConfigs = load((0,external_fs_.readFileSync)(`${ process.env.GITHUB_WORKSPACE }/defs/projects.yml`, 'utf8'));
     repos.forEach((repo) => {
         repoProjectsOwners[repo.name] = repoProjectsOwners[repo.name] || [];
         projectConfigs.forEach((item) => {
@@ -34962,7 +34930,7 @@ const buildRepoProjectsOwners = async () => {
  */
 const crudWorkflow = async () => {
     // Read the template
-    const workflow = external_fs_default()(
+    const workflow = (0,external_fs_.readFileSync)(
         `${ process.env.GITHUB_WORKSPACE }/.github/workflow-templates/project-automation.yml`, 'utf8'
     );
     // For each company's repository create, update or delete the project automation workflow.

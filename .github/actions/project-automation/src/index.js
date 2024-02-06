@@ -1,10 +1,10 @@
 // Require modules.
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import readFileSync from 'fs';
-import yaml from 'js-yaml';
-import Octokit from '@octokit/core';
-import createOrUpdateTextFile from '@octokit/plugin-create-or-update-text-file';
+import {readFileSync} from 'fs';
+import * as yaml from 'js-yaml';
+import {Octokit} from '@octokit/core';
+import {createOrUpdateTextFile} from '@octokit/plugin-create-or-update-text-file';
 
 // Setup global vars.
 let repos = [],
