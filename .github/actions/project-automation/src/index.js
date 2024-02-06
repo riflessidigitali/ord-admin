@@ -1,36 +1,33 @@
 // Require modules.
-const
-	core = require( '@actions/core' ),
-    github = require( '@actions/github' ),
-	{readFileSync} = require( 'fs' ),
-	yaml = require( 'js-yaml' ),
-    {Octokit} = require("@octokit/core"),
-    {createOrUpdateTextFile} = require("@octokit/plugin-create-or-update-text-file");
+import * as core from '@actions/core';
+import * as github from '@actions/github';
+import readFileSync from 'fs';
+import yaml from 'js-yaml';
+import Octokit from '@octokit/core';
+import createOrUpdateTextFile from '@octokit/plugin-create-or-update-text-file';
 
 // Setup global vars.
 let repos = [],
     repoProjectsOwners = {};
 
 const
-	token          = core.getInput( 'repo-token' ),
+    token          = core.getInput( 'repo-token' ),
     octokit        = github.getOctokit( token ),
-	_Octokit       = Octokit.plugin(createOrUpdateTextFile),
+    _Octokit       = Octokit.plugin(createOrUpdateTextFile),
     octokitCreate  = new _Octokit({auth:token}),
-	org            = core.getInput( 'org' );
+    org            = core.getInput( 'org' );
 
 /**
  * Pluck.
  *
- * @param {Array} arr
- * @param {String} key
- * @return {Array}
+ * @param arr Array of objects.
+ * @param key Key to search for.
+ * @returns An array of values of the requested key.
  */
 const pluck = (arr, key) => arr.map(i => i[key]);
 
 /**
  * Create update or delete the project automation workflow on each repository.
- *
- * @return {Void}
  */
 const updateRepos = async () => {
     await buildRepoProjectsOwners();
@@ -39,8 +36,6 @@ const updateRepos = async () => {
 
 /**
  * Create an array of repo => [{ project, owner }].
- *
- * @return {void}
  */
 const buildRepoProjectsOwners = async () => {
     const projectConfigs = yaml.load(readFileSync(`${ process.env.GITHUB_WORKSPACE }/defs/projects.yml`, 'utf8'));
@@ -57,12 +52,10 @@ const buildRepoProjectsOwners = async () => {
             }
         });
     });
-}
+};
 
 /**
  * Create update or delete the project automation workflow on each repository.
- *
- * @return {void}
  */
 const crudWorkflow = async () => {
     // Read the template
@@ -70,7 +63,7 @@ const crudWorkflow = async () => {
         `${ process.env.GITHUB_WORKSPACE }/.github/workflow-templates/project-automation.yml`, 'utf8'
     );
     // For each company's repository create, update or delete the project automation workflow.
-    for ( repo in repoProjectsOwners ) {
+    for ( const repo in repoProjectsOwners ) {
         const
             projects = pluck(repoProjectsOwners[repo], 'project').filter(() => true),
             owners   = pluck(repoProjectsOwners[repo], 'owner').filter(() => true);
@@ -89,7 +82,7 @@ const crudWorkflow = async () => {
                 repoWorkflow ? 'Creating/Updating' : 'Deleting',
                 repo
             );
-            const { updated, deleted, data } = await octokitCreate.createOrUpdateTextFile({
+            await octokitCreate.createOrUpdateTextFile({
                 owner: org,
                 repo: repo,
                 path: '.github/workflows/project-automation.yml',
@@ -102,12 +95,10 @@ const crudWorkflow = async () => {
         }
 
     }
-}
+};
 
 /**
  * Main.
- *
- * @return {void}
  */
 const main = async () => {
     repos = await octokit.paginate('GET /orgs/{org}/repos', {
@@ -115,9 +106,9 @@ const main = async () => {
     } );
 
     repos = repos
-        .filter( ( { archived, disabled, fork } ) => false === archived && false === disabled /*&& false === fork*/ );
+        .filter( ( { archived, disabled, fork } ) => false === archived && false === disabled && false === fork );
     await updateRepos();
 
-}
+};
 
 main().catch( err => core.setFailed( err.message ) );
