@@ -35166,7 +35166,9 @@ const buildRepoProjectsOwners = async () => {
  */
 const crudWorkflow = async () => {
     // Read the template
-    const workflow = readFileSync(`${ process.env.GITHUB_WORKSPACE }/.github/workflow-templates/project-automation.yml`, 'utf8');
+    const workflow = readFileSync(
+        `${ process.env.GITHUB_WORKSPACE }/.github/workflow-templates/project-automation.yml`, 'utf8'
+    );
     // For each company's repository create, update or delete the project automation workflow.
     for ( repo in repoProjectsOwners ) {
         const
@@ -35182,19 +35184,17 @@ const crudWorkflow = async () => {
             }
         }
         try {
-            const action = repoWorkflow ? 'Creating/Updating' : 'Deleting';
             console.log(
                 '%s the project-automation.yml workflow file on %s',
-                action,
+                repoWorkflow ? 'Creating/Updating' : 'Deleting',
                 repo
-            );
-            console.log(repoWorkflow);
+            );ì
             const { updated, deleted, data } = await octokitCreate.createOrUpdateTextFile({
                 owner: org,
                 repo: repo,
-                path: ".github/workflows/project-automation.yml",
+                path: '.github/workflows/project-automation.yml',
                 content: repoWorkflow, // When equals to null the workflow file will be deleted.
-                message: "Project Automation Workflow File"
+                message: 'Project Automation Workflow File'
             });
         } catch (error) {
             console.log(error);
