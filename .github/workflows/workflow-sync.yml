@@ -7,7 +7,7 @@ on:
       - .github/workflows-templates/project-automation.yml
 
       # Defs.
-      - projects.yml
+      - team-config.yml
 
       # When this file is edited.
       - .github/workflows/workflow-sync.yml
@@ -29,5 +29,5 @@ jobs:
       - name: Sync project-automation
         uses: ./.github/actions/project-automation
         with:
-          repo-token: ${{ secrets.CSPF_PKGS_WORKFLOW_DISPATCH_PAT }}
+          token: ${{ secrets.CSPF_REPO_READ_PAT }}
           org: ${{ env.ORGANIZATION }}

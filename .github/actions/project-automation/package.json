@@ -13,8 +13,7 @@
     },
     "devDependencies": {
       "@vercel/ncc": "^0.38.1",
-      "jest": "^29.7.0",
-      "@caseproof/eslint-plugin": "github:caseproof/coding-standards-js#1.0.0"
+      "@caseproof/eslint-plugin": "github:caseproof/coding-standards-js#dev"
     },
     "scripts": {
       "build": "ncc build src/index.js --license licenses.txt",

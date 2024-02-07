@@ -7,46 +7,51 @@ import {Octokit} from '@octokit/core';
 import {createOrUpdateTextFile} from '@octokit/plugin-create-or-update-text-file';
 
 // Setup global vars.
-let repos = [],
-    repoProjectsOwners = {};
+let reposConfig = {},
+    _oktokitInstances = {};
 
 const
-    token          = core.getInput( 'repo-token' ),
-    octokit        = github.getOctokit( token ),
-    _Octokit       = Octokit.plugin(createOrUpdateTextFile),
-    octokitCreate  = new _Octokit({auth:token}),
-    org            = core.getInput( 'org' );
-
-/**
- * Pluck.
- *
- * @param arr Array of objects.
- * @param key Key to search for.
- * @returns An array of values of the requested key.
- */
-const pluck = (arr, key) => arr.map(i => i[key]);
+    token = core.getInput('token'),
+    org   = core.getInput('org');
 
 /**
  * Create update or delete the project automation workflow on each repository.
  */
 const updateRepos = async () => {
-    await buildRepoProjectsOwners();
+
     await crudWorkflow();
 };
 
 /**
- * Create an array of repo => [{ project, owner }].
+ * Create an array of repo => [{ project, owner, secrets }].
  */
-const buildRepoProjectsOwners = async () => {
-    const projectConfigs = yaml.load(readFileSync(`${ process.env.GITHUB_WORKSPACE }/defs/projects.yml`, 'utf8'));
+const buildreposConfig = async () => {
+    const
+        teamsConfigs = yaml.load(
+            readFileSync(
+                `${ process.env.GITHUB_WORKSPACE }/defs/teams-config.yml`,
+                'utf8'
+            )
+        );
+    let repos = await _oktokitInstances.global.paginate(
+        'GET /orgs/{org}/repos',
+        {
+            org,
+        }
+    );
+
+    repos = repos
+        .filter( ( { archived, disabled, fork } ) => false === archived && false === disabled && false === fork );
+
     repos.forEach((repo) => {
-        repoProjectsOwners[repo.name] = repoProjectsOwners[repo.name] || [];
-        projectConfigs.forEach((item) => {
-            if (item.repositories.includes(repo.name)) {
-                repoProjectsOwners[repo.name].push(
+        reposConfig[repo.name] = reposConfig[repo.name] || [];
+        teamsConfigs.forEach((item) => {
+            if (item.repos.includes(repo.name)) {
+                reposConfig[repo.name].push(
                     {
                         project: item.project,
-                        owner: item.owner ?? '' // The project owner is optional.
+                        owner: item.owner,
+                        secrets: item.secrets
                     }
                 );
             }
@@ -58,23 +63,25 @@ const buildRepoProjectsOwners = async () => {
  * Create update or delete the project automation workflow on each repository.
  */
 const crudWorkflow = async () => {
-    // Read the template
+    // Read the template.
     const workflow = readFileSync(
         `${ process.env.GITHUB_WORKSPACE }/.github/workflow-templates/project-automation.yml`, 'utf8'
     );
+
     // For each company's repository create, update or delete the project automation workflow.
-    for ( const repo in repoProjectsOwners ) {
+    for ( const repo in reposConfig ) {
         const
-            projects = pluck(repoProjectsOwners[repo], 'project').filter(() => true),
-            owners   = pluck(repoProjectsOwners[repo], 'owner').filter(() => true);
+            project       = reposConfig[repo].project ?? '',
+            owner         = reposConfig[repo].owner ?? '',
+            issueManPat   = reposConfig[repo].secrets['issue-man-pat'] ?? '',
+            octokitCreate = _getOktokitInstance(reposConfig[repo].secrets['workflow-manage-pat']);
 
         let repoWorkflow = null;
-        if (projects.length > 0) {
+        if (project) {
             repoWorkflow = workflow.replace(/{{{PROJECT_ORG}}}/g, org);
-            repoWorkflow = repoWorkflow.replace(/{{{PROJECT_ID}}}/g, `${projects[0].toString()}`);
-            if (owners.length > 0) {
-                repoWorkflow = repoWorkflow.replace(/{{{PRIMARY_CODEOWNER}}}/g, `"${owners[0].toString()}"`);
-            }
+            repoWorkflow = repoWorkflow.replace(/{{{PROJECT_ID}}}/g, project);
+            repoWorkflow = repoWorkflow.replace(/{{{PRIMARY_CODEOWNER}}}/g, owner);
+            repoWorkflow = repoWorkflow.replace(/{{{ISSUE_MANAGE_PAT}}}/g, issueManPat);
         }
         try {
             console.log(
@@ -97,16 +104,23 @@ const crudWorkflow = async () => {
     }
 };
 
+const _getOktokitInstance = (token) => {
+    if (Object.hasOwn(_oktokitInstances,token)) {
+        return _oktokitInstances[token];
+    }
+    const _Octokit = Octokit.plugin(createOrUpdateTextFile);
+
+    _oktokitInstances[token] = new _Octokit({auth:token});
+    return  _oktokitInstances[token];
+};
+
 /**
  * Main.
  */
 const main = async () => {
-    repos = await octokit.paginate('GET /orgs/{org}/repos', {
-        org,
-    } );
 
-    repos = repos
-        .filter( ( { archived, disabled, fork } ) => false === archived && false === disabled && false === fork );
+    _oktokitInstances.global = github.getOctokit(token);
+    await buildreposConfig();
     await updateRepos();
 
 };
