@@ -34887,7 +34887,7 @@ let
 
 const
     //token = core.getInput('repo-token'),
-    secrets = core.getInput('secrets'),
+    secrets = JSON.parse(core.getInput('secrets')),
     org   = core.getInput('org');
 
 /**
@@ -34993,7 +34993,6 @@ const _getOktokitInstance = (token) => {
  * Main.
  */
 const main = async () => {
-    console.log('here');
     _oktokitInstances.global = github.getOctokit(secrets.CSPF_REPO_READ_PAT);
     await buildreposConfig();
     await updateRepos();
