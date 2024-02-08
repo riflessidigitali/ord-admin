@@ -24,7 +24,7 @@ const updateRepos = async () => {
 };
 
 /**
- * Create an array of {repo : { project, owner, secrets }}.
+ * Create an array of {repo : { project, owner, secrets }...}.
  */
 const buildreposConfig = async () => {
     const
@@ -59,7 +59,6 @@ const buildreposConfig = async () => {
             }
         }
     });
-    console.log(reposConfig);
 };
 
 /**
@@ -134,7 +133,8 @@ const _getOctokitInstance = (key, type) => {
     if (!Object.hasOwn(_octokitInstances,key)) {
         _octokitInstances[key]={};
     }
-    console.log('here');
+    console.log(key);
+    console.log(type);
     _octokitInstances[key][type] = octokitInstance;
     return  _octokitInstances[key][type];
 };
