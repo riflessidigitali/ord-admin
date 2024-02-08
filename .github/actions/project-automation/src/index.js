@@ -80,7 +80,7 @@ const crudWorkflow = async () => {
         if (project) {
             repoWorkflow = workflow.replace(/{{{PROJECT_ORG}}}/g, org);
             repoWorkflow = repoWorkflow.replace(/{{{PROJECT_ID}}}/g, project);
-            repoWorkflow = repoWorkflow.replace(/{{{PRIMARY_CODEOWNER}}}/g, owner);
+            repoWorkflow = repoWorkflow.replace(/{{{PRIMARY_CODEOWNER}}}/g, `"@${owner}"`);
             repoWorkflow = repoWorkflow.replace(/{{{ISSUE_MAN_PAT}}}/g, issueManPat);
         }
 
