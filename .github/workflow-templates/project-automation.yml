@@ -78,5 +78,5 @@ jobs:
       - name: Assign issue
         uses: pozil/auto-assign-issue@v1
         with:
-          token: ${{ secrets[ISSUE_MANAGE_PAT] }}
+          repo-token: ${{ secrets[ISSUE_MANAGE_PAT] }}
           assignees: ${{ env.PRIMARY_CODEOWNER }}

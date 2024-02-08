@@ -11,7 +11,7 @@ let reposConfig = {},
     _oktokitInstances = {};
 
 const
-    token = core.getInput('token'),
+    token = core.getInput('repo-token'),
     org   = core.getInput('org');
 
 /**
