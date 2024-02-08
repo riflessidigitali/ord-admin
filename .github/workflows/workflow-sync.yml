@@ -3,7 +3,7 @@ name: Sync Organization Files
 on:
   push:
     paths:
-      # Utils.
+      # Templates.
       - .github/workflows-templates/project-automation.yml
 
       # Defs.
