@@ -34948,7 +34948,7 @@ const crudWorkflow = async () => {
             project       = reposConfig[repo].project ?? '',
             owner         = reposConfig[repo].owner ?? '',
             issueManPat   = reposConfig[repo].secrets?.['issue-manage'] ?? '',
-            octokitCreate = _getOktokitInstance(secrets[reposConfig[repo].secrets?.['workflow-manage'] ?? ''] ?? '');
+            octokitCreate = _getOctokitInstance(secrets[reposConfig[repo].secrets?.['workflow-manage'] ?? ''] ?? '');
 
         let repoWorkflow = null;
         if (project) {
@@ -34979,13 +34979,27 @@ const crudWorkflow = async () => {
     }
 };
 
-const _getOktokitInstance = (token) => {
-    if (Object.hasOwn(_oktokitInstances,token)) {
-        return _oktokitInstances[token];
+/**
+ * Retrieves and Octokit instance, and caches it.
+ *
+ * @param string key Octokit instance key in the cache, key can be 'global' or an actual token.
+ * @returns Octokit or Octokit instance with the plugin createOrUpdateTextFile, associated with the given key.
+ */
+const _getOctokitInstance = (key) => {
+    if (Object.hasOwn(_oktokitInstances,key)) {
+        return _oktokitInstances[key];
     }
-    const _Octokit = dist_node.Octokit.plugin(plugin_create_or_update_text_file_dist_node.createOrUpdateTextFile);
-    _oktokitInstances[token] = new _Octokit({auth:token});
-    return  _oktokitInstances[token];
+
+    let octokitInstance = null;
+    if ('global' === key) {
+        octokitInstance = github.getOctokit(secrets.CSPF_REPO_READ_PAT);
+    } else {
+        const _Octokit = dist_node.Octokit.plugin(plugin_create_or_update_text_file_dist_node.createOrUpdateTextFile);
+        octokitInstance = new _Octokit({auth:key});
+    }
+
+    _oktokitInstances[key] = octokitInstance;
+    return  _oktokitInstances[key];
 };
 
 /**
