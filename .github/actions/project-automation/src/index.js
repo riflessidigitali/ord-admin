@@ -119,6 +119,7 @@ const _getOktokitInstance = (token) => {
  * Main.
  */
 const main = async () => {
+    console.log('here');
     _oktokitInstances.global = github.getOctokit(secrets.CSPF_REPO_READ_PAT);
     await buildreposConfig();
     await updateRepos();
