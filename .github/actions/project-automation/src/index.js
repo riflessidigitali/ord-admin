@@ -39,25 +39,26 @@ const buildreposConfig = async () => {
             org,
         }
     );
-
     repos = repos
         .filter(({archived, disabled, fork}) => false === archived && false === disabled && false === fork);
+
 
     repos.forEach((repo) => {
         reposConfig[repo.name] = reposConfig[repo.name] || [];
         for ( const team in teamsConfig ) {
             const teamConfig = teamsConfig[team];
             if (teamConfig.repos.includes(repo.name)) {
-                reposConfig[repo.name].push(
-                    {
-                        project: teamConfig.project,
-                        owner: teamConfig.owner,
-                        secrets: teamConfig.secrets
-                    }
-                );
+                reposConfig[repo.name] = {
+                    project: teamConfig.project,
+                    owner: teamConfig.owner,
+                    secrets: teamConfig.secrets
+                }
             }
         }
     });
+    console.log(
+        reposConfig
+    );
 };
 
 /**
@@ -71,19 +72,21 @@ const crudWorkflow = async () => {
 
     // For each company's repository create, update or delete the project automation workflow.
     for ( const repo in reposConfig ) {
+
         const
             project       = reposConfig[repo].project ?? '',
             owner         = reposConfig[repo].owner ?? '',
-            issueManPat   = reposConfig[repo].secrets['issue-man-pat'] ?? '',
-            octokitCreate = _getOktokitInstance(reposConfig[repo].secrets['workflow-manage-pat']);
+            issueManPat   = reposConfig[repo].secrets?.['issue-manage'] ?? '',
+            octokitCreate = _getOktokitInstance(reposConfig[repo].secrets?.['workflow-manage'] ?? '');
 
         let repoWorkflow = null;
         if (project) {
-            repoWorkflow = workflow.replace(/{{{PROJECT_ORG}}}/g, org);
+            repoWorkflow = workflow.replace(/{{{PROJECT_ORG}}}/g, 'caseproof');
             repoWorkflow = repoWorkflow.replace(/{{{PROJECT_ID}}}/g, project);
             repoWorkflow = repoWorkflow.replace(/{{{PRIMARY_CODEOWNER}}}/g, owner);
-            repoWorkflow = repoWorkflow.replace(/{{{ISSUE_MANAGE_PAT}}}/g, issueManPat);
+            repoWorkflow = repoWorkflow.replace(/{{{ISSUE_MAN_PAT}}}/g, `"${issueManPat}"`);
         }
+
         try {
             console.log(
                 '%s the project-automation.yml workflow file on %s',
