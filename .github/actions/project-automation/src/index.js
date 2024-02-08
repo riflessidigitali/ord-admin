@@ -7,7 +7,8 @@ import {Octokit} from '@octokit/core';
 import {createOrUpdateTextFile} from '@octokit/plugin-create-or-update-text-file';
 
 // Setup global vars.
-let reposConfig = {},
+let
+    reposConfig       = {},
     _oktokitInstances = {};
 
 const
@@ -26,13 +27,14 @@ const updateRepos = async () => {
  * Create an array of repo => [{ project, owner, secrets }].
  */
 const buildreposConfig = async () => {
-    const
-        teamsConfigs = yaml.load(
-            readFileSync(
-                `${ process.env.GITHUB_WORKSPACE }/defs/teams-config.yml`,
-                'utf8'
-            )
-        );
+
+    const teamsConfig = yaml.load(
+        readFileSync(
+            `${ process.env.GITHUB_WORKSPACE }/defs/teams-config.yml`,
+            'utf8'
+        )
+    );
+
     let repos = await _oktokitInstances.global.paginate(
         'GET /orgs/{org}/repos',
         {
@@ -41,21 +43,21 @@ const buildreposConfig = async () => {
     );
 
     repos = repos
-        .filter( ( { archived, disabled, fork } ) => false === archived && false === disabled && false === fork );
+        .filter(({archived, disabled, fork}) => false === archived && false === disabled && false === fork);
 
     repos.forEach((repo) => {
         reposConfig[repo.name] = reposConfig[repo.name] || [];
-        teamsConfigs.forEach((item) => {
-            if (item.repos.includes(repo.name)) {
+        for ( const teamConfig in teamsConfig ) {
+            if (teamConfig.repos.includes(repo.name)) {
                 reposConfig[repo.name].push(
                     {
-                        project: item.project,
-                        owner: item.owner,
-                        secrets: item.secrets
+                        project: teamConfig.project,
+                        owner: teamConfig.owner,
+                        secrets: teamConfig.secrets
                     }
                 );
             }
-        });
+        }
     });
 };
 
@@ -118,11 +120,9 @@ const _getOktokitInstance = (token) => {
  * Main.
  */
 const main = async () => {
-
     _oktokitInstances.global = github.getOctokit(token);
     await buildreposConfig();
     await updateRepos();
-
 };
 
 main().catch( err => core.setFailed( err.message ) );
