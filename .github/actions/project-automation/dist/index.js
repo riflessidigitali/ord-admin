@@ -34888,7 +34888,7 @@ let
 const
     //token = core.getInput('repo-token'),
     secrets = JSON.parse(core.getInput('secrets')),
-    org   = core.getInput('org');
+    org     = core.getInput('org');
 
 /**
  * Create update or delete the project automation workflow on each repository.
@@ -34952,10 +34952,10 @@ const crudWorkflow = async () => {
 
         let repoWorkflow = null;
         if (project) {
-            repoWorkflow = workflow.replace(/{{{PROJECT_ORG}}}/g, 'caseproof');
+            repoWorkflow = workflow.replace(/{{{PROJECT_ORG}}}/g, org);
             repoWorkflow = repoWorkflow.replace(/{{{PROJECT_ID}}}/g, project);
             repoWorkflow = repoWorkflow.replace(/{{{PRIMARY_CODEOWNER}}}/g, owner);
-            repoWorkflow = repoWorkflow.replace(/{{{ISSUE_MAN_PAT}}}/g, `"${issueManPat}"`);
+            repoWorkflow = repoWorkflow.replace(/{{{ISSUE_MAN_PAT}}}/g, issueManPat);
         }
 
         try {
