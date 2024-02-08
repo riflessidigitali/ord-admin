@@ -30,4 +30,4 @@ jobs:
         uses: ./.github/actions/project-automation
         with:
           org: ${{ env.ORGANIZATION }}
-          secrets: ${{ secrets }}
+          secrets: ${{ toJson(secrets) }}
