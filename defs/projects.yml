@@ -1,8 +1,0 @@
-- project: 1
-  owner: "@eri-trabiccolo"
-  repositories:
-    - childify-me
-
-- project: 2
-  repositories:
-    - dotfiles
