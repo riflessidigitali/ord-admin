@@ -70,7 +70,7 @@ const crudWorkflow = async () => {
 
     // For each company's repository create, update or delete the project automation workflow.
     for ( const repo in reposConfig ) {
-
+        console.log(reposConfig[repo].secrets?.['workflow-manage'] ?? '');
         const
             project       = reposConfig[repo].project ?? '',
             owner         = reposConfig[repo].owner ?? '',
