@@ -34898,17 +34898,19 @@ const updateRepos = async () => {
 };
 
 /**
- * Create an array of repo => [{ project, owner, secrets }].
+ * Create an array of [repo => [{ project, owner, secrets }]].
  */
 const buildreposConfig = async () => {
-    const teamsConfig = load(
-        (0,external_fs_.readFileSync)(
-            `${ process.env.GITHUB_WORKSPACE }/defs/teams-config.yml`,
-            'utf8'
-        )
-    );
+    const
+        teamsConfig = load(
+            (0,external_fs_.readFileSync)(
+                `${ process.env.GITHUB_WORKSPACE }/defs/teams-config.yml`,
+                'utf8'
+            )
+        ),
+        octokit    = _getOctokitInstance(secrets.CSPF_REPO_READ_PAT);
 
-    let repos = await _oktokitInstances.global.paginate(
+    let repos = await octokit.paginate(
         'GET /orgs/{org}/repos',
         {
             org,
@@ -34931,6 +34933,7 @@ const buildreposConfig = async () => {
             }
         }
     });
+    console.log(reposConfig);
 };
 
 /**
@@ -34982,24 +34985,29 @@ const crudWorkflow = async () => {
 /**
  * Retrieves and Octokit instance, and caches it.
  *
- * @param string key Octokit instance key in the cache, key can be 'global' or an actual token.
+ * @param string key  Octokit instance key in the cache, usually a token.
+ * @param string type Can be 'global' or 'textCRUD'. Default is 'global'.
  * @returns Octokit or Octokit instance with the plugin createOrUpdateTextFile, associated with the given key.
  */
-const _getOctokitInstance = (key) => {
-    if (Object.hasOwn(_oktokitInstances,key)) {
-        return _oktokitInstances[key];
+const _getOctokitInstance = (key, type) => {
+    type = type || 'global';
+    if (
+        Object.hasOwn(_oktokitInstances,key) &&
+        Object.hasOwn(_oktokitInstances[key],type)
+    ) {
+        return _oktokitInstances[key][type];
     }
 
     let octokitInstance = null;
-    if ('global' === key) {
-        octokitInstance = github.getOctokit(secrets.CSPF_REPO_READ_PAT);
+    if ('global' === type) {
+        octokitInstance = github.getOctokit(key);
     } else {
         const _Octokit = dist_node.Octokit.plugin(plugin_create_or_update_text_file_dist_node.createOrUpdateTextFile);
         octokitInstance = new _Octokit({auth:key});
     }
 
-    _oktokitInstances[key] = octokitInstance;
-    return  _oktokitInstances[key];
+    _oktokitInstances[key][type] = octokitInstance;
+    return  _oktokitInstances[key][type];
 };
 
 /**
