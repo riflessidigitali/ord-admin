@@ -24,7 +24,7 @@ const updateRepos = async () => {
 };
 
 /**
- * Create an array of {repo : { project, owner, secrets }...}.
+ * Create an array of {repo : { project, owner, secrets }...} and save it globally.
  */
 const buildreposConfig = async () => {
     const
@@ -62,7 +62,7 @@ const buildreposConfig = async () => {
 };
 
 /**
- * Create update or delete the project automation workflow on each repository.
+ * Create, update or delete the project automation workflow on each repository.
  */
 const crudWorkflow = async () => {
     // Read the template.
@@ -111,7 +111,7 @@ const crudWorkflow = async () => {
 };
 
 /**
- * Retrieves and Octokit instance, and caches it.
+ * Retrieves Octokit instance: if not already cached, creates and caches it.
  *
  * @param key  key  string Octokit instance key in the cache, usually a token.
  * @param type type string Can be 'global' or 'textCRUD'. Default is 'global'.
@@ -136,8 +136,6 @@ const _getOctokitInstance = (key, type) => {
     if (!Object.hasOwn(_octokitInstances,key)) {
         _octokitInstances[key]={};
     }
-    console.log(key);
-    console.log(type);
     _octokitInstances[key][type] = octokitInstance;
     return  _octokitInstances[key][type];
 };
