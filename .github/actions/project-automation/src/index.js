@@ -73,10 +73,10 @@ const crudWorkflow = async () => {
     // For each company's repository create, update or delete the project automation workflow.
     for ( const repo in reposConfig ) {
         const
-            project       = reposConfig[repo].project ?? '',
-            owner         = reposConfig[repo].owner ?? '',
-            issueManPat   = reposConfig[repo].secrets?.['issue-manage'] ?? '',
-            octokitCreate = _getOctokitInstance(
+            project        = reposConfig[repo].project ?? '',
+            owner          = reposConfig[repo].owner ?? '',
+            issueManagePat = reposConfig[repo].secrets?.['issue-manage'] ?? '',
+            octokitCreate  = _getOctokitInstance(
                 secrets[reposConfig[repo].secrets?.['workflow-manage'] ?? ''] ?? '',
                 'textCRUD'
             );
@@ -86,7 +86,7 @@ const crudWorkflow = async () => {
             repoWorkflow = workflow.replace(/{{{PROJECT_ORG}}}/g, org);
             repoWorkflow = repoWorkflow.replace(/{{{PROJECT_ID}}}/g, project);
             repoWorkflow = repoWorkflow.replace(/{{{PRIMARY_CODEOWNER}}}/g, `"@${owner}"`);
-            repoWorkflow = repoWorkflow.replace(/{{{ISSUE_MAN_PAT}}}/g, issueManPat);
+            repoWorkflow = repoWorkflow.replace(/{{{ISSUE_MANAGE_PAT}}}/g, issueManagePat);
         }
 
         try {

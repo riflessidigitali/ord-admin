@@ -21,7 +21,7 @@ env:
   PROJECT_ORG: {{{PROJECT_ORG}}}
   PRIMARY_CODEOWNER: {{{PRIMARY_CODEOWNER}}}
   PROJECT_ID: {{{PROJECT_ID}}}
-  ISSUE_MAN_PAT: ${{ secrets.{{{ISSUE_MAN_PAT}}} }}
+  ISSUE_MANAGE_PAT: ${{ secrets.{{{ISSUE_MANAGE_PAT}}} }}
 
 jobs:
 
@@ -78,5 +78,5 @@ jobs:
       - name: Assign issue
         uses: pozil/auto-assign-issue@v1
         with:
-          repo-token: ${{ env.ISSUE_MAN_PAT }}
+          repo-token: ${{ env.ISSUE_MANAGE_PAT }}
           assignees: ${{ env.PRIMARY_CODEOWNER }}

@@ -33,3 +33,31 @@ internal-products:
         - eri-trabiccolo
         - vphat28
 
+something-else:
+  name: Something Else
+  project: 2 # ID of the project where issues for team repos are pushed
+  permission: pull # Repo permission assigned to the team's members
+  secrets: # Organization secrets used by team workflows.
+    workflow-manage: SE_WORKFLOW_MANAGE_PAT
+    issue-manage: SE_ISSUE_MANAGE_PAT
+  members: # All members of the team
+    - eri-trabiccolo
+  owner: eri-trabiccolo # Default code owner for all team repos
+  repos: # List of all repos owned by the team
+    - whatever
+  teams: # List of subteams, their members, and their permissions
+    admins:
+      name: Something Else Admins
+      permission: maintain
+      members:
+        - eri-trabiccolo
+    cust-success:
+      name: Something Else
+      permission: triage
+      members:
+        - support-person-1
+    engineering:
+      name: Something Else Engineering
+      permission: maintain
+      members:
+        - eri-trabiccolo
