@@ -34893,7 +34893,6 @@ const
  * Create update or delete the project automation workflow on each repository.
  */
 const updateRepos = async () => {
-
     await crudWorkflow();
 };
 
@@ -34901,7 +34900,6 @@ const updateRepos = async () => {
  * Create an array of repo => [{ project, owner, secrets }].
  */
 const buildreposConfig = async () => {
-
     const teamsConfig = load(
         (0,external_fs_.readFileSync)(
             `${ process.env.GITHUB_WORKSPACE }/defs/teams-config.yml`,
@@ -34921,7 +34919,8 @@ const buildreposConfig = async () => {
 
     repos.forEach((repo) => {
         reposConfig[repo.name] = reposConfig[repo.name] || [];
-        for ( const teamConfig in teamsConfig ) {
+        for ( const team in teamsConfig ) {
+            const teamConfig = teamsConfig[team];
             if (teamConfig.repos.includes(repo.name)) {
                 reposConfig[repo.name].push(
                     {
