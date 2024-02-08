@@ -12,7 +12,8 @@ let
     _oktokitInstances = {};
 
 const
-    token = core.getInput('repo-token'),
+    //token = core.getInput('repo-token'),
+    secrets = core.getInput('secrets'),
     org   = core.getInput('org');
 
 /**
@@ -56,9 +57,6 @@ const buildreposConfig = async () => {
             }
         }
     });
-    console.log(
-        reposConfig
-    );
 };
 
 /**
@@ -77,7 +75,7 @@ const crudWorkflow = async () => {
             project       = reposConfig[repo].project ?? '',
             owner         = reposConfig[repo].owner ?? '',
             issueManPat   = reposConfig[repo].secrets?.['issue-manage'] ?? '',
-            octokitCreate = _getOktokitInstance(reposConfig[repo].secrets?.['workflow-manage'] ?? '');
+            octokitCreate = _getOktokitInstance(secrets[reposConfig[repo].secrets?.['workflow-manage'] ?? ''] ?? '');
 
         let repoWorkflow = null;
         if (project) {
@@ -113,7 +111,6 @@ const _getOktokitInstance = (token) => {
         return _oktokitInstances[token];
     }
     const _Octokit = Octokit.plugin(createOrUpdateTextFile);
-
     _oktokitInstances[token] = new _Octokit({auth:token});
     return  _oktokitInstances[token];
 };
@@ -122,7 +119,7 @@ const _getOktokitInstance = (token) => {
  * Main.
  */
 const main = async () => {
-    _oktokitInstances.global = github.getOctokit(token);
+    _oktokitInstances.global = github.getOctokit(secrets.CSPF_REPO_READ_PAT);
     await buildreposConfig();
     await updateRepos();
 };

@@ -29,5 +29,5 @@ jobs:
       - name: Sync project-automation
         uses: ./.github/actions/project-automation
         with:
-          repo-token: ${{ secrets.CSPF_REPO_READ_PAT }}
           org: ${{ env.ORGANIZATION }}
+          secrets: ${{ secrets }}
