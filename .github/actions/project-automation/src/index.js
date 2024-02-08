@@ -9,7 +9,7 @@ import {createOrUpdateTextFile} from '@octokit/plugin-create-or-update-text-file
 // Setup global vars.
 let
     reposConfig       = {},
-    _oktokitInstances = {};
+    _octokitInstances = {};
 
 const
     //token = core.getInput('repo-token'),
@@ -24,7 +24,7 @@ const updateRepos = async () => {
 };
 
 /**
- * Create an array of [repo => [{ project, owner, secrets }]].
+ * Create an array of {repo : { project, owner, secrets }}.
  */
 const buildreposConfig = async () => {
     const
@@ -55,7 +55,7 @@ const buildreposConfig = async () => {
                     project: teamConfig.project,
                     owner: teamConfig.owner,
                     secrets: teamConfig.secrets
-                }
+                };
             }
         }
     });
@@ -111,17 +111,17 @@ const crudWorkflow = async () => {
 /**
  * Retrieves and Octokit instance, and caches it.
  *
- * @param string key  Octokit instance key in the cache, usually a token.
- * @param string type Can be 'global' or 'textCRUD'. Default is 'global'.
+ * @param key  key  string Octokit instance key in the cache, usually a token.
+ * @param type type string Can be 'global' or 'textCRUD'. Default is 'global'.
  * @returns Octokit or Octokit instance with the plugin createOrUpdateTextFile, associated with the given key.
  */
 const _getOctokitInstance = (key, type) => {
     type = type || 'global';
     if (
-        Object.hasOwn(_oktokitInstances,key) &&
-        Object.hasOwn(_oktokitInstances[key],type)
+        Object.hasOwn(_octokitInstances,key) &&
+        Object.hasOwn(_octokitInstances[key],type)
     ) {
-        return _oktokitInstances[key][type];
+        return _octokitInstances[key][type];
     }
 
     let octokitInstance = null;
@@ -131,9 +131,11 @@ const _getOctokitInstance = (key, type) => {
         const _Octokit = Octokit.plugin(createOrUpdateTextFile);
         octokitInstance = new _Octokit({auth:key});
     }
-
-    _oktokitInstances[key][type] = octokitInstance;
-    return  _oktokitInstances[key][type];
+    if (!Object.hasOwn(_octokitInstances,key)) {
+        _octokitInstances[key]={};
+    }
+    _octokitInstances[key][type] = octokitInstance;
+    return  _octokitInstances[key][type];
 };
 
 /**
