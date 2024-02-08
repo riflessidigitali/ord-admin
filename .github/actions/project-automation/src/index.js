@@ -76,7 +76,10 @@ const crudWorkflow = async () => {
             project       = reposConfig[repo].project ?? '',
             owner         = reposConfig[repo].owner ?? '',
             issueManPat   = reposConfig[repo].secrets?.['issue-manage'] ?? '',
-            octokitCreate = _getOctokitInstance(secrets[reposConfig[repo].secrets?.['workflow-manage'] ?? ''] ?? '');
+            octokitCreate = _getOctokitInstance(
+                secrets[reposConfig[repo].secrets?.['workflow-manage'] ?? ''] ?? '',
+                'textCRUD'
+            );
 
         let repoWorkflow = null;
         if (project) {
