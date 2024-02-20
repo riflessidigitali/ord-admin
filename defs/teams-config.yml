@@ -43,7 +43,6 @@ internal-products:
       name: Internal Products Customer Success
       permission: triage
       members:
-        - support-person-1
     engineering:
       name: Internal Products Engineering
       permission: maintain

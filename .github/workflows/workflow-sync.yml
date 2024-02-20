@@ -4,7 +4,7 @@ on:
   push:
     paths:
       # Templates.
-      - .github/workflows-templates/project-automation.yml
+      - .github/workflow-templates/project-automation.yml
 
       # Defs.
       - .github/workflows/teams-config.yml
