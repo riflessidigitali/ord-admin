@@ -5,6 +5,8 @@ inputs:
     description: 'GitHub secrets'
   org:
     description: 'The GitHub organization slug'
+  process_deletion:
+    description: 'When set to `true` the action will also delete the project automation workflow from repositories which are not associated to any teams/projects. Default is `false`'
 runs:
   using: 'node20'
   main: 'dist/index.js'

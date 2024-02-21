@@ -34886,16 +34886,9 @@ let
     _octokitInstances = {};
 
 const
-    //token = core.getInput('repo-token'),
-    secrets = JSON.parse(core.getInput('secrets')),
-    org     = core.getInput('org');
-
-/**
- * Create update or delete the project automation workflow on each repository.
- */
-const updateRepos = async () => {
-    await crudWorkflow();
-};
+    secrets         = JSON.parse(core.getInput('secrets')),
+    org             = core.getInput('org'),
+    processDeletion = core.getInput('process_deletion') || false;
 
 /**
  * Create an array of {repo : { project, owner, secrets }...} and save it globally.
@@ -34919,7 +34912,6 @@ const buildreposConfig = async () => {
     repos = repos
         .filter(({archived, disabled, fork}) => false === archived && false === disabled && false === fork);
 
-
     repos.forEach((repo) => {
         reposConfig[repo.name] = reposConfig[repo.name] || [];
         for ( const team in teamsConfig ) {
@@ -34938,7 +34930,7 @@ const buildreposConfig = async () => {
 /**
  * Create, update or delete the project automation workflow on each repository.
  */
-const crudWorkflow = async () => {
+const updateRepos = async () => {
     // Read the template.
     const workflow = (0,external_fs_.readFileSync)(
         `${ process.env.GITHUB_WORKSPACE }/.github/workflow-templates/project-automation.yml`, 'utf8'
@@ -34949,19 +34941,29 @@ const crudWorkflow = async () => {
         const
             project        = reposConfig[repo].project ?? '',
             owner          = reposConfig[repo].owner ?? '',
-            issueManagePat = reposConfig[repo].secrets?.['issue-manage'] ?? '',
-            octokitCreate  = _getOctokitInstance(
-                secrets[reposConfig[repo].secrets?.['workflow-manage'] ?? ''] ?? '',
-                'textCRUD'
-            );
+            issueManagePat = reposConfig[repo].secrets?.['issue-manage'] ?? '';
 
         let repoWorkflow = null;
+
         if (project) {
             repoWorkflow = workflow.replace(/{{{PROJECT_ORG}}}/g, org);
             repoWorkflow = repoWorkflow.replace(/{{{PROJECT_ID}}}/g, project);
             repoWorkflow = repoWorkflow.replace(/{{{PRIMARY_CODEOWNER}}}/g, `"@${owner}"`);
             repoWorkflow = repoWorkflow.replace(/{{{ISSUE_MANAGE_PAT}}}/g, issueManagePat);
         }
+
+        if (! repoWorkflow && !processDeletion) {
+            console.log(
+                'Skipping %s: The repository is not associated to any teams, and `process_deletion` is `false`.',
+                repo
+            );
+            continue;
+        }
+
+        const octokitCreate = _getOctokitInstance(
+            secrets[reposConfig[repo].secrets?.['workflow-manage'] ?? ''] ?? '',
+            'textCRUD'
+        );
 
         try {
             console.log(
@@ -34980,7 +34982,6 @@ const crudWorkflow = async () => {
             console.log(error);
             core.setFailed(error.messages) ;
         }
-
     }
 };
 
@@ -34989,7 +34990,7 @@ const crudWorkflow = async () => {
  *
  * @param key  key  string Octokit instance key in the cache, usually a token.
  * @param type type string Can be 'global' or 'textCRUD'. Default is 'global'.
- * @returns Octokit or Octokit instance with the plugin createOrUpdateTextFile, associated with the given key.
+ * @returns Octokit instance or Octokit instance with the plugin `createOrUpdateTextFile`, associated with the given key.
  */
 const _getOctokitInstance = (key, type) => {
     type = type || 'global';
