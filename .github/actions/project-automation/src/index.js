@@ -12,8 +12,9 @@ let
     _octokitInstances = {};
 
 const
-    secrets = JSON.parse(core.getInput('secrets')),
-    org     = core.getInput('org');
+    secrets         = JSON.parse(core.getInput('secrets')),
+    org             = core.getInput('org'),
+    processDeletion = core.getInput('process_deletion') || false;
 
 /**
  * Create an array of {repo : { project, owner, secrets }...} and save it globally.
@@ -36,7 +37,6 @@ const buildreposConfig = async () => {
     );
     repos = repos
         .filter(({archived, disabled, fork}) => false === archived && false === disabled && false === fork);
-
 
     repos.forEach((repo) => {
         reposConfig[repo.name] = reposConfig[repo.name] || [];
@@ -67,19 +67,29 @@ const updateRepos = async () => {
         const
             project        = reposConfig[repo].project ?? '',
             owner          = reposConfig[repo].owner ?? '',
-            issueManagePat = reposConfig[repo].secrets?.['issue-manage'] ?? '',
-            octokitCreate  = _getOctokitInstance(
-                secrets[reposConfig[repo].secrets?.['workflow-manage'] ?? ''] ?? '',
-                'textCRUD'
-            );
+            issueManagePat = reposConfig[repo].secrets?.['issue-manage'] ?? '';
 
         let repoWorkflow = null;
+
         if (project) {
             repoWorkflow = workflow.replace(/{{{PROJECT_ORG}}}/g, org);
             repoWorkflow = repoWorkflow.replace(/{{{PROJECT_ID}}}/g, project);
             repoWorkflow = repoWorkflow.replace(/{{{PRIMARY_CODEOWNER}}}/g, `"@${owner}"`);
             repoWorkflow = repoWorkflow.replace(/{{{ISSUE_MANAGE_PAT}}}/g, issueManagePat);
         }
+
+        if (! repoWorkflow && !processDeletion) {
+            console.log(
+                'Skipping %s: The repository is not associated to any teams, and workflow deletion is disabled: see process_deletion action\'s parameter.',
+                repo
+            );
+            continue;
+        }
+
+        const octokitCreate = _getOctokitInstance(
+            secrets[reposConfig[repo].secrets?.['workflow-manage'] ?? ''] ?? '',
+            'textCRUD'
+        );
 
         try {
             console.log(
@@ -98,7 +108,6 @@ const updateRepos = async () => {
             console.log(error);
             core.setFailed(error.messages) ;
         }
-
     }
 };
 
