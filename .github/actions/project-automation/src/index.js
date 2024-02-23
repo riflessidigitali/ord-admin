@@ -13,8 +13,9 @@ let
 
 const
     secrets         = JSON.parse(core.getInput('secrets')),
-    org             = core.getInput('org'),
-    processDeletion = core.getInput('process_deletion');
+    org             = core.getInput('org');
+
+let processDeletion = core.getInput('process_deletion');
 
 /**
  * Create an array of {repo : { project, owner, secrets }...} and save it globally.
@@ -145,6 +146,18 @@ const _getOctokitInstance = (key, type) => {
  * Main.
  */
 const main = async () => {
+
+    switch (processDeletion){
+        case 'true':
+        case true:
+        case 1:
+        case '1':
+            processDeletion = true;
+            break;
+        default:
+            processDeletion = false;
+    }
+
     await buildreposConfig();
     await updateRepos();
 };
