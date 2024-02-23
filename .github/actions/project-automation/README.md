@@ -9,7 +9,7 @@ GitHub workflow action to copy the project automation workflow across company's 
 
 Run `npm install` to install the required deps.
 
-To build the action you might want to run `npm run build`. 
+To build the action, run `npm run build`. 
 The build process will generate two files:
 - the action build file located at [./dist/index.js](./dist/index.js) 
 - a license file located at [./dist/licenses.text](./dist/licenses.txt) listing the licenses for every dependency used by this action, and this action's license itself.
