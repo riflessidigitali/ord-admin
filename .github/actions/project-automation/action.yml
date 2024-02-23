@@ -1,5 +1,5 @@
 name: 'Organization Project Automation Workflow'
-description: 'Action to copy the project automation workflow across company\'s repositories'
+description: 'Action to copy the project automation workflow across company repositories'
 inputs:
   secrets:
     description: 'GitHub secrets'
