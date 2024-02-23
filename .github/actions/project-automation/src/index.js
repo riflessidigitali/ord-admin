@@ -14,7 +14,7 @@ let
 const
     secrets         = JSON.parse(core.getInput('secrets')),
     org             = core.getInput('org'),
-    processDeletion = core.getInput('process_deletion') || false;
+    processDeletion = core.getInput('process_deletion');
 
 /**
  * Create an array of {repo : { project, owner, secrets }...} and save it globally.
