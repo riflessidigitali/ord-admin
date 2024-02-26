@@ -36,7 +36,7 @@ jobs:
       - name: Add Issue to Project
         uses: leonsteinhaeuser/project-beta-automations@v2.2.1
         with:
-          gh_token: ${{ secrets.CSPF_PROJECT_MANAGE_PAT }}
+          gh_token: ${{ env.ISSUE_MANAGE_PAT }}
           organization: ${{ env.PROJECT_ORG }}
           project_id: ${{ env.PROJECT_ID }}
           resource_node_id: ${{ github.event.issue.node_id }}
