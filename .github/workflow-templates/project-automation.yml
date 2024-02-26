@@ -41,7 +41,31 @@ jobs:
           project_id: ${{ env.PROJECT_ID }}
           resource_node_id: ${{ github.event.issue.node_id }}
           status_value: "Awaiting Triage"
-
+  
+  #######################################
+  # Assign issue to the current quarter.
+  #######################################
+  issue-to-project-quarter:
+    name: Assign issue to the current Quarter
+    runs-on: ubuntu-latest
+    needs: issue-to-project
+    if: ( 'issues' == github.event_name && ( 'opened' == github.event.action || 'reopened' == github.event.action ) )
+    steps:
+      - name: Assign Issue to Project Quarter
+        uses: leonsteinhaeuser/project-beta-automations@v2.2.1
+        with:
+          gh_token: ${{ env.ISSUE_MANAGE_PAT }}
+          organization: ${{ env.PROJECT_ORG }}
+          project_id: ${{ env.PROJECT_ID }}
+          resource_node_id: ${{ github.event.issue.node_id }}
+          custom_field_values: [
+            {
+              "name": "Quarter",
+              "type": "single_select",
+              "value": "Current",
+            }
+          ]
+  
   ####################################
   # Assign to the project's CODEOWNER.
   ####################################
