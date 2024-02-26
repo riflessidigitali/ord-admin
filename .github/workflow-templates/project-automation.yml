@@ -58,6 +58,7 @@ jobs:
           organization: ${{ env.PROJECT_ORG }}
           project_id: ${{ env.PROJECT_ID }}
           resource_node_id: ${{ github.event.issue.node_id }}
+          operation_mode: custom_field
           custom_field_values: [
             {
               "name": "Quarter",
