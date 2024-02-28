@@ -94,6 +94,5 @@ membermouse:
       name: Developers
       permission: maintain
       members:
-        - thomasplevy
         - bdaug001
         - MalIlluminated
