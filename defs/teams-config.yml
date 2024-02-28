@@ -89,6 +89,7 @@ membermouse:
       permission: triage
       members:
         - joshuabaer23
+        - aicee
     developers:
       name: Developers
       permission: maintain
