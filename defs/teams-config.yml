@@ -83,7 +83,6 @@ membermouse:
       name: MemberMouse Admins
       permission: maintain
       members:
-        - thomasplevy
         - bdaug001
     cust-success:
       name: MemberMouse Customer Success
