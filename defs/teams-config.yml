@@ -63,7 +63,7 @@ membermouse:
     - bdaug001
     - MalIlluminated
     - joshuabaer23
-    - thomasplevy
+    - aicee
   owner: bdaug001 # Default code owner for all team repos
   repos: # List of all repos owned by the team
     - membermouse
