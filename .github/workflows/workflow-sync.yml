@@ -7,7 +7,7 @@ on:
       - .github/workflow-templates/project-automation.yml
 
       # Defs.
-      - .github/defs/teams-config.yml
+      - defs/teams-config.yml
 
       # When this file is edited.
       - .github/workflows/workflow-sync.yml
