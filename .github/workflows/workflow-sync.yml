@@ -12,7 +12,7 @@ on:
       # When this file is edited.
       - .github/workflows/workflow-sync.yml
     branches:
-      - trunk
+      - main
   workflow_dispatch:
 
 env:
