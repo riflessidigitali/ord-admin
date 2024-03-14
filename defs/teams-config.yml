@@ -73,8 +73,6 @@ membermouse:
     - membermouse-tools
     - membermouse-courses
     - membermouse-deployer
-    - membermouse-production
-    - membermouse-com-old
     - membermouse-license-management
     - membermouse-demo-site
     - membermouse-drip-integration
