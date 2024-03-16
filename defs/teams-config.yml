@@ -45,7 +45,7 @@ internal-products:
       members:
     engineering:
       name: Internal Products Engineering
-      permission: maintain
+      permission: push
       members:
         - thomasplevy
         - eri-trabiccolo
@@ -90,7 +90,7 @@ membermouse:
         - aicee
     developers:
       name: Developers
-      permission: maintain
+      permission: push
       members:
         - bdaug001
         - MalIlluminated
