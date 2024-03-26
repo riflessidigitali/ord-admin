@@ -1,0 +1,75 @@
+name: PHPUnit Integration Tests
+
+on:
+  pull_request:
+  workflow_dispatch:
+  # At 00:00 on Sunday.
+  schedule:
+    - cron: '0 0 * * 0'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ 'pull_request' == github.event_name && github.head_ref || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ${{ fromJson(vars.PHP_VERSIONS) }}
+        wp: ${{ fromJson(vars.WP_VERSIONS) }}
+        experimental: [false]
+        include:
+            - wp: 'nightly'
+              experimental: true
+
+
+    name: PHP ${{ matrix.php }} (with WP ${{ matrix.wp }})
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          ini-values: error_reporting=E_ALL
+          tools: composer:v2
+          coverage: none
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{secrets.CSPF_REPO_READ_PAT}}"}}'
+        run: composer update
+
+      - name: Shutdown default MySQL
+        run: sudo service mysql stop || echo "MySQL not installed"
+
+      - name: Setup MySQL
+        uses: shogo82148/actions-setup-mysql@v1
+        with:
+          mysql-version: '8.0'
+          root-password: 'password'
+
+      - name: Install test dependencies
+        if: ${{ fromJson(vars.WP_VERSIONS)[0] && matrix.wp }} # At least one WP to be tested (`nightly` excluded).
+        run: composer run install:wp -- --version "${{ matrix.wp }}" --host "127.0.0.1:3306"
+
+      - name: Run tests
+        run: composer test

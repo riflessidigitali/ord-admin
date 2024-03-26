@@ -1,16 +1,16 @@
-name: Sync Project Automation Organization File
+name: Sync PHP Unit Organization File
 
 on:
   push:
     paths:
       # Templates.
-      - .github/workflow-templates/project-automation.yml
+      - .github/workflow-templates/phpunit.yml
 
       # Defs.
       - defs/teams-config.yml
 
       # When this file is edited.
-      - .github/workflows/workflow-project-automation-sync.yml
+      - .github/workflows/workflow-phpunit-sync.yml
     branches:
       - main
   workflow_dispatch:
@@ -21,14 +21,14 @@ env:
 
 jobs:
   projects:
-    name: Project Automation Workflow Sync
+    name: PHP Unit Workflow Sync
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Sync project-automation
+      - name: Sync phpunit
         uses: ./.github/actions/files-sync
         with:
           org: ${{ env.ORGANIZATION }}
           secrets: ${{ toJson(secrets) }}
-          what: project-automation
+          what: phpunit

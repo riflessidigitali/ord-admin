@@ -34954,44 +34954,173 @@ const updateProjectAutomationRepos = async () => {
             repoWorkflow = repoWorkflow.replace(/{{{ISSUE_MANAGE_PAT}}}/g, issueManagePat);
         }
 
-        if (! repoWorkflow && !processDeletion) {
+        await _createOrUpdateFile(
+            secrets[reposConfig[repo].secrets?.['workflow-manage'] ?? ''] ?? '',
+            repo,
+            '.github/workflows/project-automation.yml',
+            repoWorkflow
+        );
+
+    }
+};
+
+/**
+ * Create, update or delete the PHPUnit automation workflow on each repository.
+ */
+const updatePHPUnitAutomationRepos= async () => {
+
+    // Check files existence
+    const filesToCheck = [
+        'phpcs.xml',
+        '.phpcs.xml.dist',
+        'phpcs.xml.dist',
+        'phpcs.ruleset.xml',
+    ];
+
+    // Read the template.
+    const workflow = (0,external_fs_.readFileSync)(
+        `${ process.env.GITHUB_WORKSPACE }/.github/workflow-templates/phpunit.yml`, 'utf8'
+    );
+
+    // For each company's repository create, update or delete the phpunit workflow.
+    for ( const repo in reposConfig ) {
+        // Skip not owned repo.
+        if (! reposConfig[repo].owner && !processDeletion) {
+            continue;
+        }
+        if (await _checkRepoFilesExist(filesToCheck, repo)) {
+            await _createOrUpdateFile(
+                secrets[reposConfig[repo].secrets?.['workflow-manage'] ?? ''] ?? '',
+                repo,
+                '.github/workflows/phpunit.yml',
+                workflow
+            );
+        } else {
             console.log(
-                'Skipping %s: The repository is not associated to any teams, and workflow deletion is disabled: see process_deletion action\'s parameter.',
+                'Skipping %s: The repository does not contain a phpunit config file',
                 repo
             );
+        }
+    }
+};
+
+/**
+ * Create, update or delete the PHPCS automation workflow on each repository.
+ */
+const updatePHPCSAutomationRepos = async () => {
+
+    // Check files existence
+    const filesToCheck = [
+        'phpcs.xml',
+        'phpcs.xml.dist',
+        'phpcs.ruleset.xml',
+    ];
+
+    // Read the template.
+    const workflow = (0,external_fs_.readFileSync)(
+        `${ process.env.GITHUB_WORKSPACE }/.github/workflow-templates/phpcs.yml`, 'utf8'
+    );
+
+    // For each company's repository create, update or delete the phpcs workflow.
+    for ( const repo in reposConfig ) {
+        // Skip not owned repo.
+        if (! reposConfig[repo].owner && !processDeletion) {
             continue;
         }
 
-        const octokitCreate = _getOctokitInstance(
-            secrets[reposConfig[repo].secrets?.['workflow-manage'] ?? ''] ?? '',
-            'textCRUD'
-        );
-
-        try {
+        if (await _checkRepoFilesExist(filesToCheck, repo)) {
+            await _createOrUpdateFile(
+                secrets[reposConfig[repo].secrets?.['workflow-manage'] ?? ''] ?? '',
+                repo,
+                '.github/workflows/phpcs.yml',
+                workflow
+            );
+        } else {
             console.log(
-                '%s the project-automation.yml workflow file on %s',
-                repoWorkflow ? 'Creating/Updating' : 'Deleting',
+                'Skipping %s: The repository does not contain a phpcs config file',
                 repo
             );
-            await octokitCreate.createOrUpdateTextFile({
-                owner: org,
-                repo: repo,
-                path: '.github/workflows/project-automation.yml',
-                content: repoWorkflow, // When equals to null the workflow file will be deleted.
-                message: 'Project Automation Workflow File'
-            });
-        } catch (error) {
-            console.log(error);
-            core.setFailed(error.messages) ;
         }
+    }
+};
+
+/**
+ * Checks if the specified files exist in the given repository.
+ *
+ * @param filesToCheck An object containing the files to check.
+ * @param repo The name of the repository to check.
+ * @returns Returns true if at least one file is found, false after checking all files.
+ */
+const _checkRepoFilesExist = async (filesToCheck, repo) => {
+    const octokitRead =  _getOctokitInstance(secrets.CSPF_REPO_READ_PAT);
+    for ( const path of filesToCheck ) {
+        try {
+            await octokitRead.request(
+                'GET /repos/{org}/{repo}/contents/{path}',
+                {
+                    org,
+                    repo,
+                    path
+                }
+            );
+            return true;
+        } catch (error) {
+            // Nothing to do.
+        }
+    }
+
+    return false;
+};
+
+/**
+ * Create or update a file on a repository.
+ *
+ * @param secret string  The secret to use to create the file.
+ * @param repo   string  The repo.
+ * @param file   string  The file to create or update (or delete).
+ * @param content string The content of the file.
+ */
+const _createOrUpdateFile = async (secret, repo, file, content) => {
+
+    if (! content && !processDeletion) {
+        console.log(
+            'Skipping %s: The repository is not associated to any teams, and workflow deletion is disabled: see process_deletion action\'s parameter.',
+            repo
+        );
+        return;
+    }
+
+    const octokitCreate = _getOctokitInstance(
+        secret,
+        'textCRUD'
+    );
+
+    try {
+        const _action = content ? 'Creating/Updating' : 'Deleting';
+        console.log(
+            '%s the %s workflow file on %s',
+            _action,
+            file.split(/[\\/]/).pop(),
+            repo
+        );
+        await octokitCreate.createOrUpdateTextFile({
+            owner: org,
+            repo: repo,
+            path: file,
+            content: content, // When equals to null the workflow file will be deleted.
+            message: `${_action} ${file}`
+        });
+    } catch (error) {
+        console.log(error);
+        core.setFailed(error.messages) ;
     }
 };
 
 /**
  * Retrieves Octokit instance: if not already cached, creates and caches it.
  *
- * @param key  key  string Octokit instance key in the cache, usually a token.
- * @param type type string Can be 'global' or 'textCRUD'. Default is 'global'.
+ * @param key  string Octokit instance key in the cache, usually a token.
+ * @param type string Can be 'global' or 'textCRUD'. Default is 'global'.
  * @returns Octokit instance or Octokit instance with the plugin `createOrUpdateTextFile`, associated with the given key.
  */
 const _getOctokitInstance = (key, type) => {
@@ -35035,9 +35164,15 @@ const main = async () => {
 
     await buildreposConfig();
     switch (what) {
-        case 'project-automation':
-            await updateProjectAutomationRepos();
-            break;
+    case 'project-automation':
+        await updateProjectAutomationRepos();
+        break;
+    case 'phpcs':
+        await updatePHPCSAutomationRepos();
+        break;
+    case 'phpunit':
+        await updatePHPUnitAutomationRepos();
+        break;
     }
 
 };
