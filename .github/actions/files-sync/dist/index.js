@@ -34886,8 +34886,9 @@ let
     _octokitInstances = {};
 
 const
-    secrets         = JSON.parse(core.getInput('secrets')),
-    org             = core.getInput('org');
+    secrets = JSON.parse(core.getInput('secrets')),
+    org     = core.getInput('org'),
+    what    = core.getInput('what');
 
 let processDeletion = core.getInput('process_deletion');
 
@@ -34931,7 +34932,7 @@ const buildreposConfig = async () => {
 /**
  * Create, update or delete the project automation workflow on each repository.
  */
-const updateRepos = async () => {
+const updateProjectAutomationRepos = async () => {
     // Read the template.
     const workflow = (0,external_fs_.readFileSync)(
         `${ process.env.GITHUB_WORKSPACE }/.github/workflow-templates/project-automation.yml`, 'utf8'
@@ -35022,18 +35023,23 @@ const _getOctokitInstance = (key, type) => {
 const main = async () => {
 
     switch (processDeletion){
-        case 'true':
-        case true:
-        case 1:
-        case '1':
-            processDeletion = true;
-            break;
-        default:
-            processDeletion = false;
+    case 'true':
+    case true:
+    case 1:
+    case '1':
+        processDeletion = true;
+        break;
+    default:
+        processDeletion = false;
     }
 
     await buildreposConfig();
-    await updateRepos();
+    switch (what) {
+        case 'project-automation':
+            await updateProjectAutomationRepos();
+            break;
+    }
+
 };
 
 main().catch( err => core.setFailed( err.message ) );

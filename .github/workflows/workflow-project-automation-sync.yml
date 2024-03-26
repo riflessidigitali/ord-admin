@@ -10,7 +10,7 @@ on:
       - .github/workflows/teams-config.yml
 
       # When this file is edited.
-      - .github/workflows/workflow-sync.yml
+      - .github/workflows/workflow-project-automation-sync.yml
     branches:
       - trunk
   workflow_dispatch:
@@ -27,7 +27,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Sync project-automation
-        uses: ./.github/actions/project-automation
+        uses: ./.github/actions/files-sync
         with:
           org: ${{ env.ORGANIZATION }}
           secrets: ${{ toJson(secrets) }}
+          what: project-automation
