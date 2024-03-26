@@ -7,12 +7,12 @@ on:
       - .github/workflow-templates/project-automation.yml
 
       # Defs.
-      - .github/workflows/teams-config.yml
+      - defs/teams-config.yml
 
       # When this file is edited.
       - .github/workflows/workflow-project-automation-sync.yml
     branches:
-      - trunk
+      - main
   workflow_dispatch:
 
 env:

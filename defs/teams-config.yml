@@ -23,8 +23,8 @@ internal-products:
     - ground-level-sample-plugin
     - growth-tools
     - heroic-knowledge-base-helpscout
-    - hs-to-hkb-migrator
     - membermouse-com-2020
+    - membermouse-com-dunning-options
     - mothership-wp
     - my.wishlistmember.com
     - pkgs.cspf.co
@@ -45,9 +45,52 @@ internal-products:
       members:
     engineering:
       name: Internal Products Engineering
-      permission: maintain
+      permission: push
       members:
         - thomasplevy
         - eri-trabiccolo
         - vphat28
 
+membermouse:
+  name: MemberMouse
+  project: 7 # ID of the project where issues for team repos are pushed
+  permission: pull # Repo permission assigned to the team's members
+  secrets: # Organization secrets used by team workflows.
+    workflow-manage: MM_WORKFLOW_MANAGE_PAT
+    issue-manage: MM_ISSUE_MANAGE_PAT
+    repo-write: MM_REPO_WRITE_PAT
+  members: # All members of the team
+    - bdaug001
+    - MalIlluminated
+    - joshuabaer23
+    - aicee
+  owner: bdaug001 # Default code owner for all team repos
+  repos: # List of all repos owned by the team
+    - membermouse
+    - membermouse-pdf-receipts
+    - membermouse-central
+    - bbpress-addon-for-membermouse
+    - membermouse-tools
+    - membermouse-courses
+    - membermouse-deployer
+    - membermouse-license-management
+    - membermouse-demo-site
+    - membermouse-drip-integration
+  teams: # List of subteams, their members, and their permissions
+    admins:
+      name: MemberMouse Admins
+      permission: maintain
+      members:
+        - bdaug001
+    cust-success:
+      name: MemberMouse Customer Success
+      permission: triage
+      members:
+        - joshuabaer23
+        - aicee
+    developers:
+      name: Developers
+      permission: push
+      members:
+        - bdaug001
+        - MalIlluminated
