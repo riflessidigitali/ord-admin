@@ -1,11 +1,11 @@
 ###
 #
-# This workflow file is deployed into this repository via the "Sync Organization Files" workflow
+# This workflow file is deployed into this repository via the "Sync Project Automation Organization File" workflow
 #
 # Direct edits to this file are at risk of being overwritten by the next sync. All edits should be made
 # to the source file.
 #
-# @see Sync workflow {@link https://github.com/caseproof/.github/workflows/workflow-sync.yml}
+# @see Sync workflow {@link https://github.com/caseproof/.github/workflows/workflow-project-automation-sync.yml}
 # @see Workflow template {@link https://github.com/caseproof/.github/blob/main/.github/workflow-templates/project-automation.yml}
 #
 ###
