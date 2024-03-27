@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 
 env:
-  ORGANIZATION: 'caseproof'
+  ORGANIZATION: ${{ github.repository_owner }}
 
 
 jobs:
